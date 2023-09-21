@@ -16,7 +16,8 @@ export default {
         mainSelectionBlueHover: '#304859',
         mainSelectionBlueIdle: '#BCCED9',
         secondButtonGray: '#DFE7EC',
-        secondButtonGrayHover: '#6395B8'
+        secondButtonGrayHover: '#6395B8',
+        secondButtonIdle: '#DFE7EC'
       },
       fontFamily: {
         atkinson: ['Atkinson Hyperlegible', 'sans-serif']

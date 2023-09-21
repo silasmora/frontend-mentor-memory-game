@@ -1,59 +1,89 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react';
+import { Context } from '../Context';
 
 const shuffleArray = (array) => {
-  const shuffledArray = [...array]
+  const shuffledArray = [...array];
   for (let i = shuffledArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
   }
-  return shuffledArray
-}
+  return shuffledArray;
+};
 
-const generateNumbersContent = (gridSize) => {
+const generateNumbersContent = (gridSize, moves, setMoves) => {
+
+  const {shuffledNumbers, setShuffledNumbers, clickedIndices, setClickedIndices, foundPairs, setFoundPairs, resetEffect, setResetEffect} = useContext(Context)
 
   const numRows = parseInt(gridSize.split('x')[0]);
   const numCols = parseInt(gridSize.split('x')[1]);
 
-  //Generate pairs of numbers for the game board
+  //Calculate total possible pairs based on rows and cols
   const totalPairs = (numRows * numCols) / 2
-  const initialNumbers = Array.from({length: totalPairs }, (_, index) => index + 1)
+  
+  //convert totalPairs value to an array
+  const initialNumbers = Array.from({length: totalPairs}, (_, index) => index + 1)
+  
+  //duplicate the numbers in the array so that pairing of 2 numbers is possible
   const numbers = [...initialNumbers, ...initialNumbers]
 
-  //Shuffle the numbers only once when the component is first rendered
-  const [shuffledNumbers, setShuffledNumbers] = useState([])
-
   useEffect(() => {
-    setShuffledNumbers(shuffleArray(numbers))
-  }, [])
+    setShuffledNumbers(shuffleArray(numbers));
+    setResetEffect(false)
+  }, [resetEffect]);
   
-  //state to track which numbers
-  const [clickedNumbers, setClickedNumbers] = useState(new Array(numbers.length).fill(false))
-
   const handleNumberClick = (index) => {
-    //Toggle the clicked state for the clicked number
-    const updatedClickedNumbers = [...clickedNumbers]
-    updatedClickedNumbers[index] = !updatedClickedNumbers[index]
-    setClickedNumbers(updatedClickedNumbers)
-  }
+  if (!foundPairs.includes(index) && clickedIndices.length < 2) {
+    const updatedClickedIndices = [...clickedIndices, index];
+    setClickedIndices(updatedClickedIndices);
+    
+    if (clickedIndices.length === 1) {
+      if (shuffledNumbers[clickedIndices[0]] === shuffledNumbers[index]) {
+        const updatedFoundPairs = [...foundPairs, clickedIndices[0], index];
+        setFoundPairs(updatedFoundPairs);
+        setClickedIndices([])
+        } else {
+          setTimeout(() => {
+            setClickedIndices([]);
+          }, 1000);
+        }
+        setMoves(moves + 1)
+      } 
+    }
+  };
 
-  // Return the Numbers content
+  const classList = shuffledNumbers.map((number, idx) => {
+    let classNames = 'flex justify-center items-center rounded-full transition duration-300';
+  
+    if (foundPairs.includes(idx)) {
+      classNames += ' bg-mainSelectionBlueIdle';
+    } else if (clickedIndices.includes(idx)) {
+      classNames += ' bg-mainButtonOrange';
+    } else {
+      classNames += ' bg-mainSelectionBlue hover:bg-secondButtonGrayHover';
+    }
+    
+    return classNames;
+  });
+  
   return (
-    <div className='grid grid-cols-4 gap-3'>
-      {numbers.map((number, idx) => (
-        <div key={idx} className={`rounded-full flex justify-center items-center h-[72px] w-[72px] bg-mainSelectionBlue ${clickedNumbers[idx] ? 'bg-mainButtonOrange' : 'bg-mainSelectionBlue'}`}
+    <div className={`cursor-pointer grid grid-cols-4 auto-rows-fr gap-3 h-[90vw] w-[90vw] sm:h-[80vw] sm:w-[80vw] md:h-[70vw] md:w-[70vw] md:gap-5 lg:h-[40vw] lg:w-[40vw] lg:max-w-[532px] lg:max-h-[532px] 
+    ${gridSize === '6x6' && 'grid-cols-6'}
+    `}>
+      {shuffledNumbers.map((number, idx) => (
+        <div
+          key={idx}
+          className={classList[idx]}
           onClick={() => handleNumberClick(idx)}
         >
-          
-          {clickedNumbers[idx] ? (
-            <p className='text-[40px] font-bol text-backgroundWhite cursor-pointer'>
-            {number}
-          </p>
+          {clickedIndices.includes(idx) || foundPairs.includes(idx) ? (
+            <p className='text-[40px] font-bold text-backgroundWhite'>
+              {number}
+            </p>
           ) : null}
-          
         </div>
       ))}
     </div>
   );
-}
+};
 
 export default generateNumbersContent
