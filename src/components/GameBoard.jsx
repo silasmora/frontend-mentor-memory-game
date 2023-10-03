@@ -3,6 +3,9 @@ import generateNumbersContent from './GenerateNumbersContent';
 import { Context } from '../Context';
 import RestartButton from './RestartButton';
 import NewGameButton from './NewGameButton';
+import { Context } from '../Context';
+import RestartButton from './RestartButton';
+import NewGameButton from './NewGameButton';
 
 const GameBoard = ({ gameSettings, setIsMobileModal, setIsGameStarted }) => {
 

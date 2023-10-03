@@ -7,6 +7,7 @@ function App() {
   
   const [isGameStarted, setIsGameStarted] = useState(false)
   const [isMobileModal, setIsMobileModal] = useState(false)
+  const [isMobileModal, setIsMobileModal] = useState(false)
   const [gameSettings, setGameSettings] = useState({
     selectedTheme: 'Numbers',
     totalPlayers: '1',
@@ -19,7 +20,13 @@ function App() {
 
   return (
     <div className={`${isGameStarted ? 'bg-backgroundWhite' : 'bg-mainTextGray'} h-screen`}>
+    <div className={`${isGameStarted ? 'bg-backgroundWhite' : 'bg-mainTextGray'} h-screen`}>
       {isGameStarted ? (
+        <GameBoard 
+          gameSettings={gameSettings}
+          setIsMobileModal={setIsMobileModal}
+          setIsGameStarted={setIsGameStarted}
+          /> 
         <GameBoard 
           gameSettings={gameSettings}
           setIsMobileModal={setIsMobileModal}
@@ -39,7 +46,13 @@ function App() {
             />
         )}
     </div>
-  )
+      {isMobileModal && (
+          <MobileMenuModal 
+            setIsMobileModal={setIsMobileModal}
+            setIsGameStarted={setIsGameStarted}
+            />
+        )}
+    </div>
 }
 
 export default App
