@@ -139,7 +139,7 @@ const generateContent = (selectedTheme, gridSize, totalPlayers, moves, setMoves,
               onClick={() => handleNumberClick(idx)}
             >
               {clickedIndices.includes(idx) || foundPairs.includes(idx) ? (
-                <p className='text-[40px] font-bold text-backgroundWhite'>
+                <p className='text-[24px] md:text-[56px] font-bold text-backgroundWhite'>
                   {number}
                 </p>
               ) : null}

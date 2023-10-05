@@ -28,6 +28,7 @@ const GameBoard = ({ gameSettings, setIsGameStarted }) => {
 
   // useEffect to initialize player data based on total player count.
   // Generates an array of player objects with unique IDs, names, scores, and pairsFound properties.
+
   useEffect(() => {
     const initialPlayer = Array.from({length: playerCount}, (_, index) => {
       // Player names are set to 'P1', 'P2', ... for small screens and 'Player 1', 'Player 2', ... for larger screens.
@@ -59,7 +60,7 @@ const GameBoard = ({ gameSettings, setIsGameStarted }) => {
   }
 
   return (
-    <div className='max-w-[1440px] mx-auto bg-backgroundWhite flex flex-col items-center gap-[85px] px-6 py-6 md:py-10 lg:py-16 md:px-10 lg:px-[165px]'>
+    <div className='max-w-[1440px] mx-auto bg-backgroundWhite flex flex-col items-center gap-[80px] px-6 py-6 md:py-10 lg:py-16 md:px-10 lg:px-[165px] md:gap-[120px] lg:gap-[85px]'>
       <div className='flex justify-between items-center w-full'>
         <h2 className='text-[24px] text-mainTextGray font-bold md:text-[40px]'>memory</h2>
         <button onClick={() => setIsMobileModal(true)} className='font-bold text-backgroundWhite py-[10px] px-[18px] bg-mainButtonOrange rounded-full md:hidden'>Menu</button>
