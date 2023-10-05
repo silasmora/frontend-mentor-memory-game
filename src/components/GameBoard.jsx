@@ -1,23 +1,20 @@
-import React, {useContext, useEffect, useState} from 'react'
-import generateNumbersContent from './GenerateNumbersContent';
-import { Context } from '../Context';
-import RestartButton from './RestartButton';
-import NewGameButton from './NewGameButton';
+import React, {useContext, useEffect} from 'react'
+import generateNumbersContent from './GenerateContent';
 import { Context } from '../Context';
 import RestartButton from './RestartButton';
 import NewGameButton from './NewGameButton';
 
-const GameBoard = ({ gameSettings, setIsMobileModal, setIsGameStarted }) => {
+const GameBoard = ({ gameSettings, setIsGameStarted }) => {
 
-  const {setTimer, moves, setMoves, formattedTimer, isGameCompleted, currentPlayerIndex, setCurrentPlayerIndex} = useContext(Context)
+  const {setTimer, moves, setMoves, formattedTimer, isGameCompleted, currentPlayerIndex, setCurrentPlayerIndex, players, setPlayers, setIsMobileModal} = useContext(Context)
   const { selectedTheme, totalPlayers, gridSize } = gameSettings
 
-  const [players, setPlayers] = useState([])
+  // Parse the total number of players as an integer with a radix of 10 (decimal).
   const playerCount = parseInt(totalPlayers, 10)
-  
+
   useEffect(() => {
     let intervalId
-    if (selectedTheme === 'Numbers' || 'Icons' && !isGameCompleted) {
+    if (!isGameCompleted) {
       intervalId = setInterval(() => {
         setTimer((prevTimer) => prevTimer + 1)
       }, 1000)
@@ -29,34 +26,36 @@ const GameBoard = ({ gameSettings, setIsMobileModal, setIsGameStarted }) => {
     }
   }, [isGameCompleted])
 
+  // useEffect to initialize player data based on total player count.
+  // Generates an array of player objects with unique IDs, names, scores, and pairsFound properties.
   useEffect(() => {
     const initialPlayer = Array.from({length: playerCount}, (_, index) => {
-      const playerName = window.innerWidth < 768 ? `P${index + 1}` : `Player${index + 1}`
+      // Player names are set to 'P1', 'P2', ... for small screens and 'Player 1', 'Player 2', ... for larger screens.
+      const playerName = window.innerWidth < 768 ? `P${index + 1}` : `Player ${index + 1}`
       return {
         id: index + 1,
         name: playerName,
         score: 0,
+        pairsFound: 0
       }
     })
     setPlayers(initialPlayer)
   }, [playerCount])
-
+  
   const handleMove = () => {
-    setTimeout(() => {
-      // Get the current player
-      const currentPlayer = players[currentPlayerIndex]
+    // Get the current player
+    const currentPlayer = players[currentPlayerIndex]
 
-      //Increment the score of the current player
-      const updatedPlayers = [...players]
-      updatedPlayers[currentPlayerIndex] = {
-        ...currentPlayer,
-        score: currentPlayer.score + 1,
-      }
-      setPlayers(updatedPlayers)
+    //Increment the score of the current player
+    const updatedPlayers = [...players]
+    updatedPlayers[currentPlayerIndex] = {
+      ...currentPlayer,
+      score: currentPlayer.score + 1,
+    }
+    setPlayers(updatedPlayers)
 
-      // Move to the nest player
-      setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length)
-    }, 1000);
+    // Move to the nest player
+    setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length)
   }
 
   return (
@@ -66,13 +65,13 @@ const GameBoard = ({ gameSettings, setIsMobileModal, setIsGameStarted }) => {
         <button onClick={() => setIsMobileModal(true)} className='font-bold text-backgroundWhite py-[10px] px-[18px] bg-mainButtonOrange rounded-full md:hidden'>Menu</button>
         <div className='hidden md:flex gap-4 text-[20px]'>
           <RestartButton />
-          <NewGameButton setIsMobileModal={setIsMobileModal} setIsGameStarted={setIsGameStarted}/>
+          <NewGameButton setIsGameStarted={setIsGameStarted}/>
         </div>
       </div>
       
       {selectedTheme && (
         <div className='flex justify-center mb-4'>
-          {generateNumbersContent(selectedTheme, gridSize, moves, setMoves, handleMove)}
+          {generateNumbersContent(selectedTheme, gridSize, totalPlayers, moves, setMoves, handleMove, setIsGameStarted)}
         </div>
       )}
 
@@ -93,11 +92,11 @@ const GameBoard = ({ gameSettings, setIsMobileModal, setIsGameStarted }) => {
       ) : (
         <div className='flex gap-6 w-full'>
           {players.map((player, idx) => (
-            <div key={player.id} className={`rounded-[10px] text-center w-full py-2 md:pl-4 md:text-left
+            <div key={player.id} className={`rounded-[10px] text-center w-full py-2 md:pl-4 md:text-left lg:flex items-center justify-between lg:py-4 lg:pr-5
             ${idx === currentPlayerIndex ? 'relative bg-mainButtonOrange before:content-[""] before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:-translate-y-[100%] before:border-transparent before:border-[10px] before:border-b-mainButtonOrange lg:after:content-["current_turn"] after:w-full after:absolute after:bottom-0 after:left-0 after:translate-y-full after:pt-6 after:text-mainTextGray after:text-[13px] after:font-bold after:tracking-[5px] after:text-center after:uppercase' : 'bg-secondButtonIdle'}
             `}>
-              <p className={`text-[15px] font-bold ${idx === currentPlayerIndex ? 'text-backgroundWhite' : 'text-grayBlue'}`}>{player.name}</p>
-              <p className={`text-2xl font-bold ${idx === currentPlayerIndex ? 'text-backgroundWhite' : 'text-mainSelectionBlueHover'}`}>{player.score}</p>
+              <p className={`text-[15px] font-bold lg:text-[18px] ${idx === currentPlayerIndex ? 'text-backgroundWhite' : 'text-grayBlue'}`}>{player.name}</p>
+              <p className={`text-2xl font-bold lg:text-[32px] ${idx === currentPlayerIndex ? 'text-backgroundWhite' : 'text-mainSelectionBlueHover'}`}>{player.score}</p>
             </div>
           ))}
         </div>

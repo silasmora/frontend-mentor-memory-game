@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import { Context } from '../Context'
 
-const NewGameButton = ({setIsMobileModal, setIsGameStarted, isGameCompletedStats}) => {
+const NewGameButton = ({setIsGameStarted, isGameCompletedStats}) => {
 
-  const {setFoundPairs, setClickedIndices, setMoves, setTimer, setResetEffect, setIsGameCompleted} = useContext(Context)
+  const {setIsMobileModal, setFoundPairs, setClickedIndices, setMoves, setTimer, setResetEffect, setIsGameCompleted, setCurrentPlayerIndex, setPlayers} = useContext(Context)
 
   const newGame = () => {
-    setResetEffect(true)
+    setResetEffect(true) // This will re-shuffle the content when new or restarted game is clicked
     setFoundPairs([])
     setClickedIndices([])
     setMoves(0)
@@ -14,6 +14,19 @@ const NewGameButton = ({setIsMobileModal, setIsGameStarted, isGameCompletedStats
     setIsMobileModal(false)
     setIsGameStarted(false)
     setIsGameCompleted(false)
+
+    // Reset player scores and set current player index back to 0
+    setPlayers((prevPlayers) => {
+      return prevPlayers.map((player) => {
+        return {
+          ...player,
+          score: 0,
+          pairsFound: 0,
+        };
+      });
+    });
+  
+    setCurrentPlayerIndex(0); // Set the current player index back to 0
   }
 
   return (

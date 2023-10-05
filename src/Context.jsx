@@ -4,6 +4,7 @@ const Context = React.createContext()
 
 const ContextProvider = ({ children }) => {
 
+  const [isMobileModal, setIsMobileModal] = useState(false)
   const [shuffledNumbers, setShuffledNumbers] = useState([])
   const [shuffledIcons, setShuffledIcons] = useState([])
   const [clickedIndices, setClickedIndices] = useState([])
@@ -12,6 +13,7 @@ const ContextProvider = ({ children }) => {
   const [timer, setTimer] = useState(0)
   const [resetEffect, setResetEffect] = useState(false)
   const [isGameCompleted, setIsGameCompleted] = useState(false)
+  const [players, setPlayers] = useState([])
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0)
 
   const formattedTimer = new Date(timer * 1000).toISOString().substr(14, 5)
@@ -27,6 +29,8 @@ const ContextProvider = ({ children }) => {
   };
 
   const value = {
+    isMobileModal,
+    setIsMobileModal,
     shuffledNumbers,
     setShuffledNumbers,
     shuffledIcons,
@@ -46,7 +50,9 @@ const ContextProvider = ({ children }) => {
     setIsGameCompleted,
     shuffleArray,
     currentPlayerIndex,
-    setCurrentPlayerIndex
+    setCurrentPlayerIndex,
+    players,
+    setPlayers
   }
   return (
     <Context.Provider value={value}>

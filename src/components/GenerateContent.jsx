@@ -3,9 +3,9 @@ import { Context } from '../Context';
 import { GameCompletedStats } from './GameCompletedStats';
 import icons from '../icons';
 
-const generateNumbersContent = (selectedTheme, gridSize, moves, setMoves, handleMove) => {
+const generateContent = (selectedTheme, gridSize, totalPlayers, moves, setMoves, handleMove, setIsGameStarted) => {
 
-  const {shuffledNumbers, setShuffledNumbers, shuffledIcons, setShuffledIcons, clickedIndices, setClickedIndices, foundPairs, setFoundPairs, resetEffect, setResetEffect, isGameCompleted, setIsGameCompleted, shuffleArray} = useContext(Context)
+  const {shuffledNumbers, setShuffledNumbers, shuffledIcons, setShuffledIcons, clickedIndices, setClickedIndices, foundPairs, setFoundPairs, resetEffect, setResetEffect, isGameCompleted, setIsGameCompleted, shuffleArray, currentPlayerIndex, players, setPlayers} = useContext(Context)
   
   const numRows = parseInt(gridSize.split('x'));
   const numCols = parseInt(gridSize.split('x'));
@@ -46,9 +46,19 @@ const generateNumbersContent = (selectedTheme, gridSize, moves, setMoves, handle
             const updatedFoundPairs = [...foundPairs, clickedIndices[0], index];
             setFoundPairs(updatedFoundPairs);
             setClickedIndices([]);
+
+            const currentPlayer = players[currentPlayerIndex]
+            const updatedPlayers = [...players]
+            updatedPlayers[currentPlayerIndex] = {
+              ...currentPlayer,
+              score: currentPlayer.score + 1,
+              pairsFound: currentPlayer.pairsFound + 1
+            }
+            setPlayers(updatedPlayers)
           } else {
             setTimeout(() => {
               setClickedIndices([]);
+              handleMove()
             }, 1000);
           }
         } else {
@@ -57,14 +67,23 @@ const generateNumbersContent = (selectedTheme, gridSize, moves, setMoves, handle
             const updatedFoundPairs = [...foundPairs, clickedIndices[0], index];
             setFoundPairs(updatedFoundPairs);
             setClickedIndices([]);
+
+            const currentPlayer = players[currentPlayerIndex]
+            const updatedPlayers = [...players]
+            updatedPlayers[currentPlayerIndex] = {
+              ...currentPlayer,
+              score: currentPlayer.score + 1,
+              pairsFound: currentPlayer.pairsFound + 1
+            }
+            setPlayers(updatedPlayers)
           } else {
             setTimeout(() => {
               setClickedIndices([]);
+              handleMove()
             }, 1000);
           }
         }
         setMoves(moves + 1);
-        handleMove()
       }
     }
   };
@@ -141,10 +160,10 @@ const generateNumbersContent = (selectedTheme, gridSize, moves, setMoves, handle
         )}
       </div>
       {isGameCompleted && (
-        <GameCompletedStats />
+        <GameCompletedStats totalPlayers={totalPlayers} setIsGameStarted={setIsGameStarted}/>
       )}
     </>
   );
 };
 
-export default generateNumbersContent
+export default generateContent
